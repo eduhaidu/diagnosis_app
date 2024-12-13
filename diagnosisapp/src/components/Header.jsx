@@ -6,14 +6,9 @@ function Header(){
     return (
         <>
         <header>
-            <h1>Diagnosis App</h1>
+            <h1>Diagnosis AI</h1>
         </header>
-        <div>
-            <Button class="PatientButton">{patientButtonText}</Button>
-        </div>
-        <div>
-            <Button class="DoctorButton">{doctorButtonText}</Button>
-        </div></>
+        </>
     )
 }
 
