@@ -3,6 +3,13 @@ function RegisterCard(){
         <div className="register_card">
             <h1>Register</h1>
             <form>
+                <div className="accountTypeHeader">Account Type</div>
+                <div className="accountTypeSelect">
+                    <select>
+                        <option value="patient">Patient</option>
+                        <option value="doctor">Doctor</option>
+                    </select>
+                </div>
                 <div className="emailHeader">E-Mail Address</div>
                 <div className="emailInput">
                 <input type="text" placeholder="E-Mail" />
