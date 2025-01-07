@@ -1,0 +1,16 @@
+.register_card{
+    border: 1px solid rgb(78, 58, 255);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px;
+  text-align: left;
+  display: flex;
+  max-width: 500px;
+}
+
+.error{
+    color:red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}

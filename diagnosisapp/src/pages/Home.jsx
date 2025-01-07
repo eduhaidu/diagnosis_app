@@ -1,8 +1,22 @@
 import Header from "../components/Header";
 import Button from "../components/Button";
+import React, {useState, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const tryAI = "Try the Diagnosis AI! The quality of the results may not be as expected without an account.";
+    const navigateTo=useNavigate();
+    useEffect(()=>{
+        const token = localStorage.getItem('token');
+        if(token){
+            setIsLoggedIn(true);
+        }
+    })
+
+    const handleProfileClick = () => {
+        navigateTo('/profile');
+    }
     return (
         <div className="home">
             <div className="account_buttons topcorner">
