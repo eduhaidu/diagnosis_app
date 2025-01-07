@@ -14,23 +14,17 @@ function LoginCard(){
     const navigateTo = useNavigate();
     const NoAccountText = "Don't have an account? ";
     const RegisterText = "Register";
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const err = validateLogin(values);
         setErrors(err);
-        if(errors.email === "" && errors.password === ""){
-            axios.post('http://localhost:8081/login', values)
-            .then(res=>{
-                if(res.data === "Success"){
-                    navigateTo("/dashboard");
-                }
-                else{
-                    alert("Invalid email or password");
-                }
-            })
-            .catch(err=>{
+        if(err.email === "" && err.password === ""){
+            try{
+                await axios.post('http://localhost:8081/login', values);
+                navigateTo("/dashboard");
+            } catch(err){
                 console.log(err);
-            });
+            }
         }
     }
 

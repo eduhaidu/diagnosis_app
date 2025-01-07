@@ -15,18 +15,17 @@ function RegisterCard(){
     const handleInput = (e) =>{
         setValues(prev => ({...prev, [e.target.name]: [e.target.value]}));
     }
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const err = validateRegister(values);
         setErrors(err);
-        if(errors.email === "" && errors.password === ""){
-            axios.post('http://localhost:8081/register', values)
-            .then((response) => {
+        if(err.email === "" && err.password === ""){
+            try{
+                await axios.post('http://localhost:8081/register', values);
                 navigateTo("/login");
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+            }catch(err){
+                console.log(err);
+            }
         }
     }
     return (
