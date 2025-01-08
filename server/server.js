@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(cors());
@@ -39,7 +40,10 @@ app.post('/login', (req, res)=>{
             return res.json(err);
         }
         if(result.length > 0){
-            return res.json("Success");
+            const user = result[0];
+            const token = jwt.sign({id: user.id, email: user.email, accountType: user.accountType}, 'secret', {expiresIn: '1h'});
+            delete user.password;
+            return res.json({message: "Login successful", token, user});
         }
         else{
             return res.json("Invalid email or password");

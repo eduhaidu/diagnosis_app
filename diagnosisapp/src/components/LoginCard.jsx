@@ -20,10 +20,14 @@ function LoginCard(){
         setErrors(err);
         if(err.email === "" && err.password === ""){
             try{
-                await axios.post('http://localhost:8081/login', values);
+                const response = await axios.post('http://localhost:8081/login', values);
+                const { token, user } = response.data;
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));
                 navigateTo("/dashboard");
             } catch(err){
                 console.log(err);
+                alert("Invalid Credentials");
             }
         }
     }
