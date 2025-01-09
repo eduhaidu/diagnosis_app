@@ -24,7 +24,7 @@ const verifyToken = (req, res, next) => {
         console.log("No token");
         return res.status(401);
     }
-    jwt.verify(token, 'secret', (err, user)=>{
+    jwt.verify(token, JWT_SECRET, (err, user)=>{
         if(err){
             return res.status(403).json({error: "Access denied"});
         }
