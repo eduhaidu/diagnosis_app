@@ -11,16 +11,25 @@ function Appointments(){
         if(userData){
             setUserDetails(JSON.parse(userData));
         }
+    }, []);
+    useEffect(()=>{
         const getAppointments = async () => {
             try{
-                const response = await axios.get('http://localhost:8081/appointments');
-                setAppointments(response.data);
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:8081/appointments', {headers: {Authorization: `Bearer ${token}`}});
+                if(Array.isArray(response.data)){
+                    setAppointments(response.data);
+                } else {
+                    console.error('Unexpected response: ', response.data);
+                }
             }catch(err){
                 console.log(err);
             }
         }
-        getAppointments();
-    }, []);
+        if(userDetails.account_id && userDetails){
+            getAppointments();
+        }
+    }, [userDetails]);
 
     if(!userDetails){
         return <div>Loading...</div>
@@ -39,8 +48,9 @@ function Appointments(){
                     <tr>
                         <th>Date</th>
                         <th>Time</th>
+                        <th>Hospital</th>
                         <th>Doctor</th>
-                        <th>Location</th>
+                        <th>Patient</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,8 +59,9 @@ function Appointments(){
                             <tr key={index}>
                                 <td>{appointment.date}</td>
                                 <td>{appointment.time}</td>
-                                <td>{appointment.doctor}</td>
-                                <td>{appointment.location}</td>
+                                <td>{appointment.hospital_id}</td>
+                                <td>{appointment.doctor_id}</td>
+                                <td>{appointment.patient_id}</td>
                             </tr>
                         )
                     })}

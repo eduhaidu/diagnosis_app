@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -13,6 +14,24 @@ const db = mysql.createConnection({
     password: '',
     database: 'diagnosis'
 });
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if(!token){
+        console.log("No token");
+        return res.status(401);
+    }
+    jwt.verify(token, 'secret', (err, user)=>{
+        if(err){
+            return res.status(403).json({error: "Access denied"});
+        }
+        req.user = user;
+        next();
+    });
+}
 
 app.post('/register', (req, res)=>{
     const sql = "INSERT INTO accounts (email, password, type) VALUES (?)";
@@ -60,7 +79,7 @@ app.post('/login', (req, res)=>{
                     return res.json(err);
                 }
                 const userDetails = result[0];
-                const token = jwt.sign({id: userDetails.id, first_name: userDetails.first_name, last_name: userDetails.last_name, address: userDetails.address, phonenumber: userDetails.phonenumber, account_id: userDetails.account_id}, 'secret', {expiresIn: '1h'});
+                const token = jwt.sign({id: userDetails.id, first_name: userDetails.first_name, last_name: userDetails.last_name, address: userDetails.address, phonenumber: userDetails.phonenumber, account_id: userDetails.account_id, accountType: user.type}, JWT_SECRET, {expiresIn: '1h'});
                 return res.json({message: "Login successful", token, userDetails})
             });
         }
@@ -86,6 +105,32 @@ app.post('/updateUser', (req, res)=>{
         return res.json(result);
     })
 });
+
+app.get('/appointments', verifyToken, (req, res)=>{
+    const userID = req.user.id;
+    const accountType = req.user.accountType;
+    let sql;
+    switch(accountType){
+        case 1:
+            sql = "SELECT a.date, a.time, h.name AS hospital_name, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name FROM appointment a JOIN hospitals h ON a.hospital_ID = h.id JOIN doctors d ON a.doctor_ID = d.id WHERE a.patient_id = ?";
+            break;
+        case 2:
+            sql = "SELECT a.date, a.time, h.name AS hospital_name, p.first_name AS patient_first_name, p.last_name AS patient_last_name FROM appointment a JOIN hospitals h ON a.hospital_ID = h.id JOIN patients p ON a.patient_ID = p.id WHERE a.doctor_id = ?";
+            break;
+        case 3:
+            sql = "SELECT a.date, a.time, h.name AS hospital_name, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name, p.first_name AS patient_first_name, p.last_name AS patient_last_name FROM appointment a JOIN hospitals h ON a.hospital_ID = h.id JOIN doctors d ON a.doctor_ID = d.id JOIN patients p ON a.patient_id = p.id";
+            break;
+        default:
+            return res.json("Invalid account type");
+    }
+    db.query(sql, [userID], (err, result)=>{
+        if(err){
+            return res.json(err);
+        }
+        return res.json(result);
+    });
+});
+
 
 app.listen(8081, ()=>{
     console.log('Server is running on port 8081');
