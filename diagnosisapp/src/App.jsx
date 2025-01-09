@@ -6,6 +6,7 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Appointments from './pages/Appointments.jsx';
+import Diseases from './pages/Diseases.jsx';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/register" element={<Register />} /> //Directs user to Register page when they visit the /register URL
         <Route path="/dashboard" element={<Dashboard />} /> //Directs user to Dashboard page when they visit the /dashboard URL
         <Route path="/appointments" element={<Appointments />} /> //Directs user to Appointments page when they visit the /appointments URL
+        <Route path="/diseases" element={<Diseases />} /> //Directs user to Diseases page when they visit the /diseases URL
       </Routes>
     </Router>
   );
