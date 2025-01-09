@@ -131,6 +131,23 @@ app.get('/appointments', verifyToken, (req, res)=>{
     });
 });
 
+app.post('/createAppointment', verifyToken, (req, res)=>{
+    const sql = "INSERT INTO appointment (date, time, hospital_ID, doctor_ID, patient_ID) VALUES (?)";
+    const values = [
+        req.body.date,
+        req.body.time,
+        req.body.hospital,
+        req.body.doctor,
+        req.body.patient
+    ]
+    db.query(sql, [values], (err, result)=>{
+        if(err){
+            return res.json(err);
+        }
+        return res.json({message: "Appointment created successfully", newAppointment: req.body});
+    })
+});
+
 
 app.listen(8081, ()=>{
     console.log('Server is running on port 8081');

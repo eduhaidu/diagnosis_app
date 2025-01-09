@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
+import "../styles/AppointmentForm.css";
 
 function Appointments(){
     const [userDetails, setUserDetails] = useState({});
     const [appointments, setAppointments] = useState([]);
+    const [newAppointment, setNewAppointment] = useState({});
 
     useEffect(()=>{
         const userData = localStorage.getItem('userDetails');
@@ -12,6 +14,7 @@ function Appointments(){
             setUserDetails(JSON.parse(userData));
         }
     }, []);
+
     useEffect(()=>{
         const getAppointments = async () => {
             try{
@@ -32,6 +35,23 @@ function Appointments(){
         }
     }, [userDetails]);
 
+    const handleInput = (e) =>{
+        setNewAppointment(prev => ({...prev, [e.target.name]: e.target.value}));
+    }
+
+    const handleSubmit = async (e) =>{
+        e.preventDefault();
+        try{
+            const token = localStorage.getItem('token');
+            const response = await axios.post('http://localhost:8081/appointments', newAppointment, {headers: {Authorization: `Bearer ${token}`}});
+            if(response.data.message === "Appointment booked"){
+                setAppointments(prev => [...prev, newAppointment]);
+                setNewAppointment({});
+            }
+        }catch(err){
+            console.log(err);
+        }
+    }
     if(!userDetails){
         return <div>Loading...</div>
     }
@@ -70,8 +90,25 @@ function Appointments(){
                 </tbody>
             </table>
         </div>
+        <div>
+            <h2>Book a new appointment</h2>
+            <form className="appointment-form" onSubmit={handleSubmit}>
+                <label htmlFor="date">Date:</label>
+                <input type="date" name="date" id="date" onChange={handleInput} />
+                <label htmlFor="time">Time:</label>
+                <input type="time" name="time" id="time" onChange={handleInput} />
+                <label htmlFor="hospital">Hospital:</label>
+                <input type="text" name="hospital" id="hospital" onChange={handleInput} />
+                <label htmlFor="doctor">Doctor:</label>
+                <input type="text" name="doctor" id="doctor" onChange={handleInput} />
+                <label htmlFor="patient">Patient:</label>
+                <input type="text" name="patient" id="patient" onChange={handleInput} />
+                <button type="submit">Book Appointment</button>
+            </form>
+        </div>
         </>
-    )
+    );
+
 }
 
 export default Appointments;
