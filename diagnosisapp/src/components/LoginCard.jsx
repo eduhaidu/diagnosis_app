@@ -21,9 +21,9 @@ function LoginCard(){
         if(err.email === "" && err.password === ""){
             try{
                 const response = await axios.post('http://localhost:8081/login', values);
-                const { token, user } = response.data;
+                const { token, userDetails } = response.data;
                 localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userDetails', JSON.stringify(userDetails));
                 navigateTo("/dashboard");
             } catch(err){
                 console.log(err);
