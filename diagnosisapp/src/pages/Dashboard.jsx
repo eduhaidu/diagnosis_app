@@ -28,8 +28,6 @@ function Dashboard(){
     }
 
     const welcomeUser = userDetails.first_name ? userDetails.first_name : "User";
-    const handleLogout = () => {
-    }
     return (
         <>
         <div>
